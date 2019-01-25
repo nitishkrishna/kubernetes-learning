@@ -1,0 +1,67 @@
+# Start minikube
+minikube start
+
+kubectl get nodes
+
+# Run hello world
+kubectl run hw --image=karthequian/helloworld --port=80
+
+kubectl expose deployment hw --type=NodePort
+kubectl get services
+minikube service hw
+
+kubectl get all
+
+kubectl get deploy/hw -o yaml
+
+# From all.yaml file:
+kubectl create -f helloworld-all.yaml
+
+# Scale the deployment
+kubectl scale --replicas=3 deploy/helloworld-deployment
+
+#Labels
+kubectl get pods --show-labels
+kubectl label po/helloworld app=helloworldapp --overwrite
+# Delete label
+
+kubectl label po/helloworld app-
+
+# Select using labels
+kubectl get pods --selector env=production --show-labels
+kubectl get pods --selector env=staging,dev-lead=karthik --show-labels
+kubectl get pods --selector env=staging,dev-lead!=karthik --show-labels
+# Select using belongs selectors
+kubectl get pods -l 'release-version in (1.0,2.0)' --show-labels
+kubectl get pods -l 'release-version notin (1.0,2.0)' --show-labels
+
+# Delete based on labels
+kubectl delete pods -l dev-lead=karthik
+
+# Readiness and Liveness
+
+# Upgrade image
+kubectl set image deployment/navbar-deployment helloworld=karthequian/helloworld:blue
+
+# Record deployments
+kubectl rollout history deployment/navbar-deployment
+deployment.extensions/navbar-deployment
+REVISION  CHANGE-CAUSE
+1         kubectl create --filename=helloworld-black.yaml --record=true
+2         kubectl create --filename=helloworld-black.yaml --record=true
+
+#Rollback
+kubectl rollout undo deployment/navbar-deployment
+kubectl rollout undo deployment/navbar-deployment --to-revision=<version number>
+
+# Debugging
+kubectl describe pod bad-helloworld-deployment-86445d9955-wks7r
+kubectl logs bad-helloworld-deployment-86445d9955-wks7r
+kubectl exec -it bad-helloworld-deployment-86445d9955-wks7r /bin/bash
+kubectl exec -it bad-helloworld-deployment-86445d9955-wks7r -c <container name> /bin/bash
+
+# ConfigMap
+kubectl create configmap logger --from-literal=log_level=debug
+kubectl get configmaps
+kubectl get configmap/logger -o yaml
+

@@ -65,3 +65,15 @@ kubectl create configmap logger --from-literal=log_level=debug
 kubectl get configmaps
 kubectl get configmap/logger -o yaml
 
+# Secrets
+kubectl create secret generic apikey --from-literal=api_key=12345
+
+# Jobs
+kubectl get jobs
+# CronJobs
+kubectl get cronjobs
+kubectl edit cronjobs/hellocron
+# suspend: true -> Suspend this cronjob
+
+# DaemonSets
+# To run a container/spec on every node in cluster
